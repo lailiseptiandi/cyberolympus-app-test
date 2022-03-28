@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,13 +15,20 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Auth::routes();
+Route::middleware('auth')->group(function () {
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('customer', [CustomerController::class, 'index'])->name('customer.index');
+    Route::post('add-customer', [CustomerController::class, 'store'])->name('post.customer');
+    Route::post('edit-customer', [CustomerController::class, 'edit'])->name('edit.customer');
+    Route::post('delete-customer', [CustomerController::class, 'destroy'])->name('delete.customer');
+
+    Route::get('customer-search', [CustomerController::class, 'search'])->name('search.customer');
+    Route::get('customer-sortir', [CustomerController::class, 'sortir'])->name('sortir.customer');
+});
